@@ -1,0 +1,6 @@
+{
+    // "include": ["./src/index.d.ts"],
+    "compilerOptions": {
+        "jsx": "react-jsx"
+    },
+}
