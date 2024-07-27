@@ -1,5 +1,5 @@
 import { Google, Instagram } from "@mui/icons-material"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 import { setUser } from "../redux/userSlice/userSlice"
@@ -8,9 +8,17 @@ import { useForm } from "react-hook-form"
 const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch()
-    const { register, handleSubmit, formState: {errors} } = useForm();
+    const { register, handleSubmit, setValue, formState: {errors} } = useForm();
     const [error, setError] = useState()
+    const [isLoading, setLoading] = useState(false)
+
+    useEffect(() => {
+        setValue("email", 'brandsonjohnson@gmail.com', { shouldDirty: true });
+        setValue("password", 'brandsonjohnson', { shouldDirty: true });
+    }, [])
+
     const onSubmit = async (data) => {
+        setLoading(true)
         try {
             const user = await fetch(process.env.REACT_APP_API_URL + 'users/login', {
                 method: "POST",
@@ -18,12 +26,13 @@ const Login = () => {
                 headers: { "Content-Type": "application/json" }
             })
             let parsedUser = await user.json();
-            console.log(parsedUser)
+            setLoading(false)
             if(parsedUser.status){
                 dispatch(setUser(parsedUser.data))
                 navigate('/profile/'+parsedUser.data._id)
             }else setError(parsedUser.message)
         }catch(err) {
+            setLoading(false)
             setError(err)
         }
     }
@@ -49,9 +58,9 @@ const Login = () => {
                             {errors?.password && <div className="text-danger"> {errors?.password.message?.toString()} </div>}
                             
                             <form action="#" onSubmit={handleSubmit(onSubmit)} className="mt-5">
-                                <input type="text" {...register('email', {required: 'Enter valid email address', pattern: /^\S+@\S+\.\S+$/})} className="form-control my-2" placeholder="Email Address" />
-                                <input type="password" {...register('password', {required: 'Password is required'})} className="form-control my-2" placeholder="Password" />
-                                <button type="submit" className="btn btn-lg w-100 btn-primary mt-2">Login</button>
+                                <input type="text" id="login_email" {...register('email', {required: 'Enter valid email address', pattern: /^\S+@\S+\.\S+$/})} className="form-control my-2" placeholder="Email Address" />
+                                <input type="password" id="login_password" {...register('password', {required: 'Password is required'})} className="form-control my-2" placeholder="Password" />
+                                <button type="submit" className="btn btn-lg w-100 btn-primary mt-2" disabled={isLoading} > {isLoading ? 'Loading..':'Login'}</button>
                                 <h6 className="m-0 mt-4 px-2" style={{cursor: 'pointer'}}> 
                                     Continue with <Google style={{width: '25px', height: '25px', color: 'green'}} />oogle  
                                 </h6>

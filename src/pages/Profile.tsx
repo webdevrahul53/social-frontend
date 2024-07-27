@@ -1,9 +1,10 @@
-import { AccountCircle, Settings } from "@mui/icons-material";
+import { AccountCircle, Logout, Settings } from "@mui/icons-material";
 import { Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { setSnack } from "../redux/snackSlice/snackSlice";
+import { setUser } from "../redux/userSlice/userSlice";
 
 const API = process.env.REACT_APP_API_URL
 
@@ -41,7 +42,7 @@ const Profile = () => {
     const dispatch = useDispatch()
     const params = useParams()
     const authUser = useSelector((state: any) => state.user.value)
-    const [user, setUser] = useState(null);
+    const [user, setUsers] = useState(null);
     const [value, setValue] = useState(0);
     const [posts, setPosts] = useState([])
   
@@ -58,7 +59,7 @@ const Profile = () => {
         try {
             const user = await fetch(API + 'users/' + params.id);
             const parsedUser = await user.json()
-            if(parsedUser) setUser(parsedUser)
+            if(parsedUser) setUsers(parsedUser)
         }catch(err) {  }
     }
 
@@ -203,7 +204,9 @@ const Profile = () => {
                                     <label htmlFor="post_file"><div className="btn btn-lg btn-outline-primary me-3">+ Post</div></label>
                                 </> : user?.followers.includes(authUser._id) ? <button className="btn btn-lg btn-outline-primary me-3" onClick={() => startedFollowing(user._id, 'DELETE')}>Unfollow</button> :
                                 <button className="btn btn-lg btn-primary me-3" onClick={() => startedFollowing(user._id, 'POST')}> {user?.following.includes(authUser._id) ? 'Follow back':'Follow'} </button>}
-                                <Settings style={{width: '40px', height: '40px'}} />
+                                {authUser ? <Settings style={{width: '40px', height: '40px'}} /> : 
+                                <span className="ms-2" onClick={() => dispatch(setUser({}))}><Logout style={{width: '40px', height: '40px'}} /></span>}
+                                
                             </div>
                         </div>
                     </div>
