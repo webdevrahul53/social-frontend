@@ -38,8 +38,8 @@ function App() {
         <Route path="/" element={<React.Suspense fallback={<Loader />}> <Home /> </React.Suspense>}></Route>
         <Route path="/profile/:id" element={<React.Suspense fallback={<Loader />}> <Profile /> </React.Suspense>}></Route>
         <Route path="/messages" element={<React.Suspense fallback={<Loader />}> <RequireAuth> <Messages /> </RequireAuth> </React.Suspense>}>
-          <Route path="" element={<React.Suspense fallback={<Loader />}>  <NewMessage /> </React.Suspense>}></Route>
-          <Route path=":id" element={<React.Suspense fallback={<Loader />}>  <MessageById /> </React.Suspense>}></Route>
+          <Route path="" element={<React.Suspense fallback={<Loader />}>  <RequireAuth> <NewMessage /> </RequireAuth> </React.Suspense>}></Route>
+          <Route path=":id" element={<React.Suspense fallback={<Loader />}> <RequireAuth> <MessageById /> </RequireAuth> </React.Suspense>}></Route>
         </Route>
       </Routes>
     </>
