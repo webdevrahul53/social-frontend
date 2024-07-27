@@ -1,11 +1,9 @@
-import { AccountCircle, Favorite, MoreVert, Person } from "@mui/icons-material"
+import { AccountCircle, Favorite, MoreVert } from "@mui/icons-material"
 import { IconButton } from "@mui/material"
-import EfilTower from "../static/efiltower.jpg";
 import CommentIcon from '@mui/icons-material/Comment';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { StyledObject } from "styled-components";
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import Rahul from '../static/rahul.jpg';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -142,7 +140,7 @@ const PostCard = ({ post, authUser, dispatch }) => {
             <div> <strong>{postData?.likes?.length} Likes</strong> </div>
             <div className="card-text"> <strong>{postData?.user_id?.email}</strong> {postData?.caption}</div>
             
-            <a href="">View all comments</a>
+            <Link to={""}>View all comments</Link>
           </div>
           <div className="d-flex align-items-center py-2" style={{position: 'absolute', bottom: 0, width: '90%'}}>
             <input type="text" className="form-control" placeholder="Add a comment" />

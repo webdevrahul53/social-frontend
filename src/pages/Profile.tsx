@@ -1,4 +1,4 @@
-import { AccountCircle, Person, Settings } from "@mui/icons-material";
+import { AccountCircle, Settings } from "@mui/icons-material";
 import { Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

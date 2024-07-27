@@ -1,13 +1,10 @@
 import { Google, Instagram } from "@mui/icons-material"
 import { useState } from "react"
-import { useDispatch } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
-import { setUser } from "../redux/userSlice/userSlice"
 import { useForm } from "react-hook-form"
 
 const Register = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch()
     const { register, handleSubmit, formState: {errors} } = useForm()
     const [error, setError] = useState('')
     const onSubmit = async (data) => {
@@ -43,7 +40,7 @@ const Register = () => {
                             {error && <div className="text-danger"> {error} </div>}
                             {errors?.name && <div className="text-danger"> {errors?.name.message?.toString()} </div>}
                             {errors?.email && <div className="text-danger"> {errors?.email.message?.toString()} </div>}
-                            {errors?.email && errors?.email?.type == 'pattern' && <div className="text-danger"> Enter valid email address </div>}
+                            {errors?.email && errors?.email?.type === 'pattern' && <div className="text-danger"> Enter valid email address </div>}
                             {errors?.password && <div className="text-danger"> {errors?.password.message?.toString()} </div>}
 
                             <form action="#" onSubmit={handleSubmit(onSubmit)} className="mt-5">

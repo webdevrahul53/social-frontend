@@ -1,13 +1,11 @@
-import { AccountCircle, Person } from "@mui/icons-material"
-import Rahul from "../static/rahul.jpg"
+import { AccountCircle } from "@mui/icons-material"
 import { StyledObject } from "styled-components"
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Link, Outlet, useParams } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 
 const API = process.env.REACT_APP_API_URL;
-const ADMIN_TOKEN = process.env.REACT_APP_ADMIN_TOKEN;
 
 let AvatarStyle: StyledObject = { width: '60px', height: '60px', borderRadius: '50px' }
 
@@ -15,7 +13,7 @@ const Profile = ({ user }) => {
     const params = useParams()
     return (
         <Link to={'/messages/' + user._id} style={{textDecoration:'none', color: 'black'}}>
-            <div className={`d-flex align-items-center p-3 ${params.id == user._id ? 'bg-light shadow-sm': ''}`}>
+            <div className={`d-flex align-items-center p-3 ${params.id === user._id ? 'bg-light shadow-sm': ''}`}>
                 {user?.avatar?.filename ? <img src={API + 'uploads/avatars/' + user?.avatar?.filename} alt="Rahul" style={AvatarStyle} /> : 
                 <AccountCircle style={AvatarStyle} />}
                 
@@ -33,7 +31,6 @@ const Profile = ({ user }) => {
 
 const Messages = () => {
     const params = useParams()
-    const dispatch = useDispatch();
     const authUser = useSelector((state:any) => state.user.value)
     const [users, setUsers] = useState([])
 
