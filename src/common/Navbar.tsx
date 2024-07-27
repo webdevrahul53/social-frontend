@@ -12,7 +12,6 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const user = useSelector((state:any) => state.user.value)
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [bottomNav, setBottomNav] = useState('/')
 
   const handleBottomNavChange = (event: React.SyntheticEvent, newValue: string) => {

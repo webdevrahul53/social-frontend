@@ -21,7 +21,7 @@ function App() {
   
   React.useEffect(() => {
     let localUser = localStorage.getItem('user');
-    if(localUser && localUser != 'undefined'){
+    if(localUser && localUser !== 'undefined'){
       let data = JSON.parse(localUser as string);
       dispatch(setUser(data));
     }
