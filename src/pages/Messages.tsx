@@ -65,9 +65,9 @@ const Messages = () => {
                             <AddIcon style={{width: '30px', height: '30px'}} />
                         </div>
                         <div className="card-body border border-top">
-                            {users?.length && users?.map(e => {
+                            {users?.length ? users?.map(e => {
                                 return <Profile user={e.user} />
-                            })}
+                            }) : <></>}
                             
                         </div>
                     </div>

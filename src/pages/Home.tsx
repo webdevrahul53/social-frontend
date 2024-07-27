@@ -223,9 +223,9 @@ const Home = () => {
           {/* Posts */}
           <div className="container-fluid p-0">
             <div className="row">
-              {posts.length && posts?.map(e => {
+              {posts.length ? posts?.map(e => {
                 return <div className="col-md-6 py-2"><PostCard key={e._id} post={e} authUser={authUser} dispatch={dispatch} /></div>
-              })}
+              }) : <></>}
             </div>
           </div>
 
@@ -237,9 +237,9 @@ const Home = () => {
           <div className="card my-2 p-2">
             <div className="d-flex align-items-center" style={{overflow: 'auto', scrollbarWidth: 'none'}}>
               {authAvatar && <StatusProfile user={authAvatar} />}
-              {avatars.length && avatars?.map(e => {
+              {avatars.length ? avatars?.map(e => {
                 return <StatusProfile key={e._id} user={e} />
-              })}
+              }) : <></>}
             </div>
           </div>
 
@@ -250,9 +250,9 @@ const Home = () => {
             <div>See all</div>
           </div>
 
-          {avatars.length && avatars?.map(e => {
+          {avatars.length ? avatars?.map(e => {
             return <Profile key={e._id} user={e} authUser={authUser} onFollow={startedFollowing} />
-          })}
+          }) : <></>}
 
 
         </div>

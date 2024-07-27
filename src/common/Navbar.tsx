@@ -62,7 +62,7 @@ const Navbar = () => {
             <Tab value={"/"} icon={<Home />} />
             <Tab value={"/messages"} icon={<Email />} />
             <Tab value={"/notifications"} icon={<Notifications />} />
-            <Tab value={"/profile/"+ user._id} icon={<Person  />} />
+            <Tab value={user._id ? '/profile/'+ user._id : '/login'} icon={<Person  />} />
           </Tabs>
 
       </div>
