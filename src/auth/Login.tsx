@@ -8,19 +8,23 @@ import { useForm } from "react-hook-form"
 const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch()
-    const { register, handleSubmit, formState: {errors} } = useForm()
+    const { register, handleSubmit, formState: {errors} } = useForm();
+    const [error, setError] = useState()
     const onSubmit = async (data) => {
         try {
-            const user = await fetch('http://localhost:4000/users/login', {
+            const user = await fetch(process.env.REACT_APP_API_URL + 'users/login', {
                 method: "POST",
                 body: JSON.stringify(data),
                 headers: { "Content-Type": "application/json" }
             })
             let parsedUser = await user.json();
-            dispatch(setUser(parsedUser.data))
-            navigate('/')
+            console.log(parsedUser)
+            if(parsedUser.status){
+                dispatch(setUser(parsedUser.data))
+                navigate('/profile/'+parsedUser.data._id)
+            }else setError(parsedUser.message)
         }catch(err) {
-            console.log(err)
+            setError(err)
         }
     }
 
@@ -39,13 +43,14 @@ const Login = () => {
                         </div>
 
                         <div className="card-body">
+                            {error && <div className="text-danger"> {error} </div>}
                             {errors?.email && <div className="text-danger"> {errors?.email.message?.toString()} </div>}
-                            {errors?.email && errors?.email?.type == 'pattern' && <div className="text-danger"> Enter valid email address </div>}
+                            {errors?.email && errors?.email?.type === 'pattern' && <div className="text-danger"> Enter valid email address </div>}
                             {errors?.password && <div className="text-danger"> {errors?.password.message?.toString()} </div>}
                             
                             <form action="#" onSubmit={handleSubmit(onSubmit)} className="mt-5">
                                 <input type="text" {...register('email', {required: 'Enter valid email address', pattern: /^\S+@\S+\.\S+$/})} className="form-control my-2" placeholder="Email Address" />
-                                <input type="text" {...register('password', {required: 'Password is required'})} className="form-control my-2" placeholder="Password" />
+                                <input type="password" {...register('password', {required: 'Password is required'})} className="form-control my-2" placeholder="Password" />
                                 <button type="submit" className="btn btn-lg w-100 btn-primary mt-2">Login</button>
                                 <h6 className="m-0 mt-4 px-2" style={{cursor: 'pointer'}}> 
                                     Continue with <Google style={{width: '25px', height: '25px', color: 'green'}} />oogle  
