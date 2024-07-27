@@ -4,6 +4,8 @@ import { Link, useParams } from "react-router-dom"
 import { StyledObject } from "styled-components";
 import CloseIcon from '@mui/icons-material/Close';
 import { useSelector } from "react-redux";
+import { io } from "socket.io-client";
+const socket = io(process.env.REACT_APP_SOCKET_API_URL);
 
 const API = process.env.REACT_APP_API_URL
 let AvatarStyle: StyledObject = { width: '50px', height: '50px', borderRadius: '50px' }
@@ -18,6 +20,10 @@ const MessageById = () => {
     const [sending, setSending] = useState(false)
 
     useEffect(() => {
+        socket.on('broadcast-message', () => getChatMessages);
+    }, [socket])
+
+    useEffect(() => {
         getUserById();
     }, [params.id])
 
@@ -28,15 +34,15 @@ const MessageById = () => {
             const parsedUser = await user.json()
             if(parsedUser) {
                 setUser(parsedUser)
-                getChatMessages(authUser._id, parsedUser._id)
+                getChatMessages()
             }
         }catch(err) {  }
     }
 
     
-    const getChatMessages = async (senderId: string, recipientId: string) => {
+    const getChatMessages = async () => {
         try {
-            const chat = await fetch(API + `messages/${senderId}/${recipientId}`, {
+            const chat = await fetch(API + `messages/${authUser?._id}/${params.id}`, {
                 method: 'GET',
                 headers: { "Content-Type":"application/json", "Authorization": "Bearer " + authUser.token }
             });
@@ -60,7 +66,7 @@ const MessageById = () => {
             });
             const parsedChat = await chat.json()
             if(parsedChat.status) {
-                getChatMessages(authUser._id, id)
+                socket.emit('message-sent', message)
                 setMessage('')
                 setSending(false)
             }
