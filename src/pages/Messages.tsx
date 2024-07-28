@@ -53,7 +53,7 @@ const Messages = () => {
 
   return (
     <>
-        <div className="container">
+        <div className="container pb-5 mb-5">
             <div className="row">
                 <div className={`col-md-4 ${params.id ? 'd-none d-md-block':''}`}>
 
@@ -66,7 +66,7 @@ const Messages = () => {
                         </div>
                         <div className="card-body border border-top">
                             {users?.length ? users?.map(e => {
-                                return <Profile user={e.user} />
+                                return <Profile key={e._id} user={e.user} />
                             }) : <></>}
                             
                         </div>

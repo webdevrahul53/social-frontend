@@ -1,18 +1,23 @@
 import { Email, Home, Instagram, Logout, Notifications, Person } from "@mui/icons-material"
 import { StyledObject } from "styled-components"
 import { Tab, Tabs } from "@mui/material";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/userSlice/userSlice";
 let anchorStyle: StyledObject = { textDecoration: 'none', color: 'black' }
 let AvatarStyle: StyledObject = { width: '40px', height: '40px', borderRadius: '50px', cursor: 'pointer' }
 
 const Navbar = () => {
+  const params = useLocation();
   const dispatch = useDispatch();
   const user = useSelector((state:any) => state.user.value)
   const navigate = useNavigate();
   const [bottomNav, setBottomNav] = useState('/')
+
+  useEffect(() => {
+    setBottomNav(params.pathname)
+  }, [params])
 
   const handleBottomNavChange = (event: React.SyntheticEvent, newValue: string) => {
     setBottomNav(newValue)
@@ -21,7 +26,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="d-none d-md-block mb-3">
+      <div className="d-none d-lg-block mb-3">
         <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm p-2">
           <div className="container">
             <div className="display-6 cursor-pointer"> 
@@ -57,7 +62,7 @@ const Navbar = () => {
         </nav>
       </div>
 
-      <div className="d-md-none position-fixed bottom-0 w-100 bg-light shadow-lg" style={{zIndex: 100, border: '2px solid lightgray'}}>
+      <div className="d-lg-none position-fixed bottom-0 w-100 bg-light shadow-lg" style={{zIndex: 100, border: '2px solid lightgray'}}>
           <Tabs value={bottomNav} onChange={handleBottomNavChange} centered>
             <Tab value={"/"} icon={<Home />} />
             <Tab value={"/messages"} icon={<Email />} />

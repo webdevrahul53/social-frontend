@@ -14,6 +14,8 @@ const RequireAuth = ({ children }) => {
           let data = JSON.parse(localUser as string);
           if(!data.token) navigate('/login')
           dispatch(setUser(data));
+        }else {
+          navigate('/login')
         }
     }, [])
 

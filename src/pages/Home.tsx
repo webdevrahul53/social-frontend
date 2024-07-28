@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setSnack } from "../redux/snackSlice/snackSlice";
+import { setUser } from "../redux/userSlice/userSlice";
 
 const API = process.env.REACT_APP_API_URL;
 const ADMIN_TOKEN = process.env.REACT_APP_ADMIN_TOKEN;
@@ -41,7 +42,7 @@ const StatusProfile = ({ user }) => {
   )
 }
 
-const Profile = ({ user, authUser, onFollow = null }) => {
+const Profile = ({ user, authUser, onFollow = null, onLogout = null }) => {
   if(!user) return <></>
   let isAuth:boolean = authUser._id === user._id;
   let hasAuthFollowed:boolean = user.followers.includes(authUser._id)
@@ -65,7 +66,7 @@ const Profile = ({ user, authUser, onFollow = null }) => {
         </Link>
         
         <div className="ms-auto pe-3">
-          {isAuth ? <button className="btn btn-outline-primary">Switch</button> : hasAuthFollowed ?
+          {isAuth ? <button className="btn btn-outline-primary" onClick={onLogout}>Logout</button> : hasAuthFollowed ?
           <button className="btn btn-sm btn-outline-primary" onClick={() => onFollow(user._id, 'DELETE')}>Unfollow</button> :
           <button className="btn btn-sm btn-primary" onClick={() => onFollow(user._id, 'POST')}> {beingAuthFollowed ? 'Follow back':'Follow'} </button>
           }
@@ -224,7 +225,7 @@ const Home = () => {
           <div className="container-fluid p-0">
             <div className="row">
               {posts.length ? posts?.map(e => {
-                return <div className="col-md-6 py-2"><PostCard key={e._id} post={e} authUser={authUser} dispatch={dispatch} /></div>
+                return <div className="col-lg-6 py-2"><PostCard key={e._id} post={e} authUser={authUser} dispatch={dispatch} /></div>
               }) : <></>}
             </div>
           </div>
@@ -243,7 +244,7 @@ const Home = () => {
             </div>
           </div>
 
-          <Profile user={authAvatar} authUser={authUser} />
+          <Profile user={authAvatar} authUser={authUser} onLogout={() => dispatch(setUser({}))} />
 
           <div className="d-flex justify-content-between mt-3 px-3">
             <h5 className="text-secondary">Suggested People</h5>

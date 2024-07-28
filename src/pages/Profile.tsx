@@ -204,8 +204,8 @@ const Profile = () => {
                                     <label htmlFor="post_file"><div className="btn btn-lg btn-outline-primary me-3">+ Post</div></label>
                                 </> : user?.followers.includes(authUser._id) ? <button className="btn btn-lg btn-outline-primary me-3" onClick={() => startedFollowing(user._id, 'DELETE')}>Unfollow</button> :
                                 <button className="btn btn-lg btn-primary me-3" onClick={() => startedFollowing(user._id, 'POST')}> {user?.following.includes(authUser._id) ? 'Follow back':'Follow'} </button>}
-                                {authUser ? <Settings style={{width: '40px', height: '40px'}} /> : 
-                                <span className="ms-2" onClick={() => dispatch(setUser({}))}><Logout style={{width: '40px', height: '40px'}} /></span>}
+                                {authUser ? <span className="ms-2" onClick={() => dispatch(setUser({}))}><Logout style={{width: '40px', height: '40px'}} /></span> : 
+                                <Settings style={{width: '40px', height: '40px'}} />}
                                 
                             </div>
                         </div>

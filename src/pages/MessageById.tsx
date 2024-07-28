@@ -18,6 +18,7 @@ const MessageById = () => {
     const [message, setMessage] = useState('')
     const [messageList, setMessageList] = useState([])
     const [sending, setSending] = useState(false)
+    const [chatLoading, setChatLoading] = useState(false)
 
     useEffect(() => {
         socket.on('broadcast-message', () => getChatMessages);
@@ -41,6 +42,7 @@ const MessageById = () => {
 
     
     const getChatMessages = async () => {
+        setChatLoading(true)
         try {
             const chat = await fetch(API + `messages/${authUser?._id}/${params.id}`, {
                 method: 'GET',
@@ -48,11 +50,14 @@ const MessageById = () => {
             });
             const parsedChat = await chat.json()
             if(parsedChat) { setMessageList(parsedChat.messages) }
+            setChatLoading(false)
             setTimeout(() => {
                 let element = document.getElementById('messageBox');
                 if(element) element.scrollTop += element?.scrollHeight;
             }, 200);
-        }catch(err) {  }
+        }catch(err) {
+            setChatLoading(false)
+        }
     }
 
     const sendMessage = async (id: string) => {
@@ -96,8 +101,12 @@ const MessageById = () => {
             </div>
 
             <div id="messageBox" className="mt-3 px-3 px-md-5" style={{height: '68%', overflow: 'auto'}}>
-                {messageList?.map(e => {
-                    return <div className="d-flex align-items-center py-2"> 
+                {chatLoading ? <>
+                    <div className="text-center">
+                        <div className="spinner-border text-primary"></div>
+                    </div>
+                </> : messageList?.map(e => {
+                    return <div key={e._id} className="d-flex align-items-center py-2"> 
                         <div>
                             {e?.senderId?.avatar?.filename ? <img src={API + 'uploads/avatars/' + e?.senderId?.avatar?.filename} alt="Rahul" style={{width: '30px', height: '30px', borderRadius: '50%'}} /> : 
                             <AccountCircle style={{width: '30px', height: '30px', borderRadius: '50%'}} />}
