@@ -225,7 +225,7 @@ const Home = () => {
           <div className="container-fluid p-0">
             <div className="row">
               {posts.length ? posts?.map(e => {
-                return <div className="col-lg-6 py-2"><PostCard key={e._id} post={e} authUser={authUser} dispatch={dispatch} /></div>
+                return <div key={e._id} className="col-lg-6 py-2"><PostCard post={e} authUser={authUser} dispatch={dispatch} /></div>
               }) : <></>}
             </div>
           </div>

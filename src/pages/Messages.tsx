@@ -35,7 +35,7 @@ const Messages = () => {
     const [users, setUsers] = useState([])
 
     useEffect(() => {
-        authUser && fetchAvatars();
+        authUser._id && fetchAvatars();
     }, [authUser])
 
     const fetchAvatars = async () => {
@@ -53,12 +53,12 @@ const Messages = () => {
 
   return (
     <>
-        <div className="container pb-5 mb-5">
+        <div className="container pt-2">
             <div className="row">
                 <div className={`col-md-4 ${params.id ? 'd-none d-md-block':''}`}>
 
                     <div className="card" 
-                    style={{height: '88vh', overflow: 'auto'}}
+                    style={{height: '82vh', overflow: 'auto'}}
                     > 
                         <div className="d-flex justify-content-between align-items-center py-4 px-5">
                             <h2 className="">Messages</h2> 
@@ -75,7 +75,7 @@ const Messages = () => {
 
                 </div>
                 <div className="col-md-8"
-                style={{height: '88vh', overflow: 'auto'}}
+                style={{height: '82vh', overflow: 'auto'}}
                 >
                     <Outlet />
                     {/* <Profile /> */}

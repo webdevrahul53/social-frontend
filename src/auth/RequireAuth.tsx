@@ -9,7 +9,6 @@ const RequireAuth = ({ children }) => {
 
     useEffect(() => {
         let localUser = localStorage.getItem('user');
-        console.log(localUser)
         if(localUser && localUser !== 'undefined'){
           let data = JSON.parse(localUser as string);
           if(!data.token) navigate('/login')

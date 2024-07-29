@@ -18,10 +18,9 @@ const MessageById = () => {
     const [message, setMessage] = useState('')
     const [messageList, setMessageList] = useState([])
     const [sending, setSending] = useState(false)
-    const [chatLoading, setChatLoading] = useState(false)
 
     useEffect(() => {
-        socket.on('broadcast-message', () => getChatMessages);
+        socket.on('broadcast-message', getChatMessages);
     }, [socket])
 
     useEffect(() => {
@@ -42,7 +41,6 @@ const MessageById = () => {
 
     
     const getChatMessages = async () => {
-        setChatLoading(true)
         try {
             const chat = await fetch(API + `messages/${authUser?._id}/${params.id}`, {
                 method: 'GET',
@@ -50,13 +48,12 @@ const MessageById = () => {
             });
             const parsedChat = await chat.json()
             if(parsedChat) { setMessageList(parsedChat.messages) }
-            setChatLoading(false)
             setTimeout(() => {
                 let element = document.getElementById('messageBox');
                 if(element) element.scrollTop += element?.scrollHeight;
             }, 200);
         }catch(err) {
-            setChatLoading(false)
+            console.log(err)
         }
     }
 
@@ -74,6 +71,7 @@ const MessageById = () => {
                 socket.emit('message-sent', message)
                 setMessage('')
                 setSending(false)
+                getChatMessages();
             }
             
         }catch(err) {  }
@@ -101,11 +99,7 @@ const MessageById = () => {
             </div>
 
             <div id="messageBox" className="mt-3 px-3 px-md-5" style={{height: '68%', overflow: 'auto'}}>
-                {chatLoading ? <>
-                    <div className="text-center">
-                        <div className="spinner-border text-primary"></div>
-                    </div>
-                </> : messageList?.map(e => {
+                {messageList?.map(e => {
                     return <div key={e._id} className="d-flex align-items-center py-2"> 
                         <div>
                             {e?.senderId?.avatar?.filename ? <img src={API + 'uploads/avatars/' + e?.senderId?.avatar?.filename} alt="Rahul" style={{width: '30px', height: '30px', borderRadius: '50%'}} /> : 
@@ -116,7 +110,7 @@ const MessageById = () => {
                 })}
             </div>
             <div style={{position: 'absolute', bottom: 0, width: '100%'}}>
-                <form action="javascript:void(0)" onSubmit={() => sendMessage(user._id)} className="d-flex align-items-center p-2 p-md-4">
+                <form action="#" onSubmit={() => sendMessage(user._id)} className="d-flex align-items-center p-2 p-md-4">
                     <input type="text" className="form-control p-2 p-md-3 px-4" value={message} onChange={e => setMessage(e.target.value)} placeholder="Send a message" />
                     <button type="submit" className="btn btn-md-lg btn-primary px-3 ms-2 ms-md-4" disabled={sending}> {sending ? 'Loading..':'Send'}</button>
                 </form>
