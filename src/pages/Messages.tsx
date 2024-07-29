@@ -35,8 +35,8 @@ const Messages = () => {
     const [users, setUsers] = useState([])
 
     useEffect(() => {
-        authUser._id && fetchAvatars();
-    }, [authUser])
+        fetchAvatars();
+    }, [])
 
     const fetchAvatars = async () => {
         try {

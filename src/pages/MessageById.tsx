@@ -110,7 +110,7 @@ const MessageById = () => {
                 })}
             </div>
             <div style={{position: 'absolute', bottom: 0, width: '100%'}}>
-                <form action="#" onSubmit={() => sendMessage(user._id)} className="d-flex align-items-center p-2 p-md-4">
+                <form action="#" onSubmit={(e) => {e.preventDefault();sendMessage(user._id)}} className="d-flex align-items-center p-2 p-md-4">
                     <input type="text" className="form-control p-2 p-md-3 px-4" value={message} onChange={e => setMessage(e.target.value)} placeholder="Send a message" />
                     <button type="submit" className="btn btn-md-lg btn-primary px-3 ms-2 ms-md-4" disabled={sending}> {sending ? 'Loading..':'Send'}</button>
                 </form>
