@@ -160,6 +160,8 @@ const Home = () => {
   const [authAvatar, setAuthAvatar] = useState(null)
   const [avatars, setAvatars] = useState([])
   const [posts, setPosts] = useState([])
+  const [avatarLoading, setAvatarLoading] = useState(true)
+  const [postLoading, setPostLoading] = useState(true)
 
   useEffect(() => {
     fetchPosts();
@@ -172,17 +174,20 @@ const Home = () => {
 
 
   const fetchPosts = async () => {
+    setPostLoading(true)
     try {
         const post = await fetch(API + 'posts');
         const parsedpost = await post.json()
         setPosts(parsedpost)
+        setPostLoading(false)
     }catch(err) {
-
+        setPostLoading(false)
     }
   }
   
 
   const fetchAvatars = async () => {
+    setAvatarLoading(true)
     try {
         const avatar = await fetch(API + 'users', {
           method: 'GET',
@@ -190,10 +195,12 @@ const Home = () => {
         });
         const parsedavatar = await avatar.json()
         let index = parsedavatar.findIndex(e => e._id === authUser._id)
-
+        setAvatarLoading(false)
         setAuthAvatar(parsedavatar[index])
         if(delete parsedavatar[index]) setAvatars(parsedavatar)
-    }catch(err) { }
+    }catch(err) {
+      setAvatarLoading(false)
+    }
   }
 
   const startedFollowing = async (id:String, method: 'POST' | 'DELETE') => {
@@ -224,9 +231,22 @@ const Home = () => {
           {/* Posts */}
           <div className="container-fluid p-0">
             <div className="row">
-              {posts.length ? posts?.map(e => {
+              {postLoading ? [1,2,3,4].map(e => {
+                return <div className="col-lg-6 py-2">
+                <div className="card">
+                  <div className="d-flex align-items-center p-2">
+                    <div className="bg-light" style={{width: '60px', height: '60px', borderRadius: '50%'}}></div>
+                    <div>
+                      <h2 className="bg-light m-0 mx-2" style={{width: '120px', height: '20px'}}></h2>
+                      <h2 className="bg-light m-0 mx-2 mt-1" style={{width: '120px', height: '20px'}}></h2>
+                    </div>
+                  </div>
+                  <div className="bg-light" style={{height: '320px'}} ></div>
+                </div>
+              </div>
+              }) :  posts?.map(e => {
                 return <div key={e._id} className="col-lg-6 py-2"><PostCard post={e} authUser={authUser} dispatch={dispatch} /></div>
-              }) : <></>}
+              })}
             </div>
           </div>
 
@@ -251,9 +271,18 @@ const Home = () => {
             <div>See all</div>
           </div>
 
-          {avatars.length ? avatars?.map(e => {
+          {avatarLoading ? [1,2,3,4].map(e => {
+            return <div className="d-flex align-items-center px-3 py-2">
+            <div className="bg-light" style={{width: '70px', height: '70px', borderRadius: '50%'}}></div>
+            <div>
+              <h2 className="bg-light m-0 mx-2" style={{width: '80px', height: '20px'}}></h2>
+              <h2 className="bg-light m-0 mx-2 mt-1" style={{width: '140px', height: '20px'}}></h2>
+            </div>
+            <h2 className="bg-light m-0 mx-2 ms-auto" style={{width: '80px', height: '40px'}}></h2>
+          </div>
+          }) : avatars?.map(e => {
             return <Profile key={e._id} user={e} authUser={authUser} onFollow={startedFollowing} />
-          }) : <></>}
+          })}
 
 
         </div>
