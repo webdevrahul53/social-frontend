@@ -200,7 +200,7 @@ const Profile = () => {
                                 <input type="file" id="post_file" accept=".jpg, .jpeg, .png" hidden onChange={e => handlePostUpload(e)} />
                                 {authUser?._id === user?._id ? 
                                 <>
-                                    <button className="btn btn-lg btn-primary me-3">Edit Profile</button> 
+                                    {/* <button className="btn btn-lg btn-primary me-3">Edit Profile</button>  */}
                                     <label htmlFor="post_file"><div className="btn btn-lg btn-outline-primary me-3">+ Post</div></label>
                                 </> : user?.followers.includes(authUser._id) ? <button className="btn btn-lg btn-outline-primary me-3" onClick={() => startedFollowing(user._id, 'DELETE')}>Unfollow</button> :
                                 <button className="btn btn-lg btn-primary me-3" onClick={() => startedFollowing(user._id, 'POST')}> {user?.following.includes(authUser._id) ? 'Follow back':'Follow'} </button>}

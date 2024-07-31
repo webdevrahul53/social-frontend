@@ -80,6 +80,7 @@ const Profile = ({ user, authUser, onFollow = null, onLogout = null }) => {
 const PostCard = ({ post, authUser, dispatch }) => {
 
   const [postData, setPost] = useState(null)
+  const [comment, setComment] = useState('')
 
   useEffect(() => {
     setPost(post)
@@ -96,6 +97,23 @@ const PostCard = ({ post, authUser, dispatch }) => {
       const parsedlikes = await likes.json()
       if(parsedlikes.status) { setPost({ ...post, likes: parsedlikes?.post?.likes }) }
       else dispatch(setSnack({message: parsedlikes.message}))
+    }catch(err) { console.log(err) } 
+  }
+
+  const addComment = async (id: string) => {
+    if(!comment || comment === '') return;
+    try {
+      let payload = { user_id: authUser._id, text: comment }
+      const comments = await fetch(API + 'posts/add_comment/'+ id, {
+        method: 'POST', body: JSON.stringify(payload),
+        headers: { "Content-Type":"application/json", "Authorization": "Bearer " + authUser.token }
+      });
+      const parsedcomments = await comments.json()
+      if(parsedcomments.status) { 
+        setComment('')
+        setPost({ ...post, comments: parsedcomments?.post?.comments }) 
+      }
+      else dispatch(setSnack({message: parsedcomments.message}))
     }catch(err) { console.log(err) } 
   }
 
@@ -140,12 +158,15 @@ const PostCard = ({ post, authUser, dispatch }) => {
             </div>
             <div> <strong>{postData?.likes?.length} Likes</strong> </div>
             <div className="card-text"> <strong>{postData?.user_id?.email}</strong> {postData?.caption}</div>
+            {postData?.comments && postData?.comments?.map(e => {
+              return <div key={e._id} className="card-text"> <strong>{e?.user_id?.email}</strong> {e?.text}</div>
+            })}
             
             <Link to={""}>View all comments</Link>
           </div>
           <div className="d-flex align-items-center py-2" style={{position: 'absolute', bottom: 0, width: '90%'}}>
-            <input type="text" className="form-control" placeholder="Add a comment" />
-            <button className="btn btn-primary px-3 ms-2">Post</button>
+            <input type="text" className="form-control" value={comment} onChange={e => setComment(e.target.value)} placeholder="Add a comment" />
+            <button type="button" className="btn btn-primary px-3 ms-2" onClick={() => addComment(post._id)}>Post</button>
           </div>
         </div>
       </div>
@@ -232,7 +253,7 @@ const Home = () => {
           <div className="container-fluid p-0">
             <div className="row">
               {postLoading ? [1,2,3,4].map(e => {
-                return <div className="col-lg-6 py-2">
+                return <div key={e} className="col-lg-6 py-2">
                 <div className="card">
                   <div className="d-flex align-items-center p-2">
                     <div className="bg-light" style={{width: '60px', height: '60px', borderRadius: '50%'}}></div>
@@ -272,7 +293,7 @@ const Home = () => {
           </div>
 
           {avatarLoading ? [1,2,3,4].map(e => {
-            return <div className="d-flex align-items-center px-3 py-2">
+            return <div key={e} className="d-flex align-items-center px-3 py-2">
             <div className="bg-light" style={{width: '70px', height: '70px', borderRadius: '50%'}}></div>
             <div>
               <h2 className="bg-light m-0 mx-2" style={{width: '80px', height: '20px'}}></h2>
