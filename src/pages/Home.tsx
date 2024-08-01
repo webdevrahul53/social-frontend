@@ -25,9 +25,9 @@ const StatusProfile = ({ user }) => {
   return (
     <>
       <div className="p-2" style={{maxWidth: '130px'}}>
-        {user?.avatar?.filename ? <>
-          <img src={API + 'uploads/avatars/' + user?.avatar?.filename} className="d-none d-md-block" alt="" style={AvatarStatusStyle} />
-          <img src={API + 'uploads/avatars/' + user?.avatar?.filename} className="d-md-none" alt="" style={AvatarStatusMobileStyle} />
+        {user?.avatar ? <>
+          <img src={user?.avatar} className="d-none d-md-block" alt="" style={AvatarStatusStyle} />
+          <img src={user?.avatar} className="d-md-none" alt="" style={AvatarStatusMobileStyle} />
         </> : <>
           <AccountCircle className="d-none d-md-block" style={AvatarStatusStyle} />
           <AccountCircle className="d-md-none" style={AvatarStatusMobileStyle} />
@@ -52,7 +52,7 @@ const Profile = ({ user, authUser, onFollow = null, onLogout = null }) => {
       <div className="d-flex align-items-center">
         <Link to={'/profile/' + user._id} style={{textDecoration:'none', color: 'black'}}>
           <div className="d-flex align-items-center p-2 px-4">
-              {user?.avatar?.filename ? <img src={API + 'uploads/avatars/' + user?.avatar?.filename} alt="Rahul" style={AvatarStyle} /> : 
+              {user?.avatar ? <img src={user?.avatar} alt="Rahul" style={AvatarStyle} /> : 
               <AccountCircle style={AvatarStyle} />}
               
               {/* {!img && <div className="bg-secondary" style={AvatarStyle}></div>} */}
@@ -103,7 +103,7 @@ const PostCard = ({ post, authUser, dispatch }) => {
   const addComment = async (id: string) => {
     if(!comment || comment === '') return;
     try {
-      let payload = { user_id: authUser._id, text: comment }
+      let payload = { user_id: authUser._id, email: authUser.email, text: comment }
       const comments = await fetch(API + 'posts/add_comment/'+ id, {
         method: 'POST', body: JSON.stringify(payload),
         headers: { "Content-Type":"application/json", "Authorization": "Bearer " + authUser.token }
@@ -123,7 +123,7 @@ const PostCard = ({ post, authUser, dispatch }) => {
         {/* Card Header */}
         <div className="d-flex align-items-center">
           <div className="d-flex align-items-center p-3">
-            <Link to={'/profile/' + postData?.user_id._id}> <img src={API + 'uploads/avatars/' + postData?.user_id?.avatar?.filename} alt="Rahul" style={AvatarStyle} /> </Link>
+            <Link to={'/profile/' + postData?.user_id._id}> <img src={postData?.user_id?.avatar} alt="Rahul" style={AvatarStyle} /> </Link>
             <div className="px-3">
               <h6 className="m-0"> {postData?.user_id.email} </h6>
               <div className="text-secondary">location</div>
@@ -137,7 +137,7 @@ const PostCard = ({ post, authUser, dispatch }) => {
           </div>
         </div>
 
-        <img src={API + 'uploads/posts/' + postData?.image?.filename} width={'100%'} alt="" onDoubleClick={() => whenLiked(postData?._id)} />
+        <img src={postData?.image} width={'100%'} alt="" onDoubleClick={() => whenLiked(postData?._id)} />
         <div className="p-2 px-3">
           <div className="py-2 pb-4">
             <div className="d-flex align-items-center">
@@ -159,7 +159,7 @@ const PostCard = ({ post, authUser, dispatch }) => {
             <div> <strong>{postData?.likes?.length} Likes</strong> </div>
             <div className="card-text"> <strong>{postData?.user_id?.email}</strong> {postData?.caption}</div>
             {postData?.comments && postData?.comments?.map(e => {
-              return <div key={e._id} className="card-text"> <strong>{e?.user_id?.email}</strong> {e?.text}</div>
+              return <div key={e._id} className="card-text"> <strong>{e?.email}</strong> {e?.text}</div>
             })}
             
             <Link to={""}>View all comments</Link>

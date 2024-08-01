@@ -5,6 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { setSnack } from "../redux/snackSlice/snackSlice";
 import { setUser } from "../redux/userSlice/userSlice";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { imageDb } from "../helper/firebaseConfig";
+import { v4 } from "uuid"; 
 
 const API = process.env.REACT_APP_API_URL
 
@@ -31,7 +34,7 @@ const Post = ({ post, onDelete }) => {
         <>
             <div className="col-6 col-md-4 p-1">
                 {/* <div className="w-100 bg-light border" style={{height: '200px'}}></div> */}
-                <img src={API + 'uploads/posts/' + post.image.filename}  alt="" width={'100%'} height={'200px'}
+                <img src={post.image}  alt="" width={'100%'} height={'200px'}
                 style={{ cursor: 'pointer'}} onClick={confirmAndDelete} />
             </div>
         </>
@@ -82,19 +85,22 @@ const Profile = () => {
     const handleProfileImageUpload = async (event: any) => {
         let file = event?.target?.files[0]
         if(!file) return;
-        let form: FormData = new FormData()
-        form.append('image', file)
-        try {
-            const profile = await fetch(API + 'users/update_avatar/' + authUser._id, {
-                method: "PATCH",
-                body: form,
-                headers: { "Authorization": "Bearer " + authUser.token }
+
+        const imageRef = ref(imageDb, `avatars/${v4()}`)
+        uploadBytes(imageRef, file).then(value => {
+            getDownloadURL(imageRef).then( async (image) => {
+                try {
+                    const profile = await fetch(API + 'users/update_avatar/' + authUser._id, {
+                        method: "PATCH", body: JSON.stringify({image}),
+                        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + authUser.token }
+                    })
+                    const parsedProfile = await profile.json();
+                    if(parsedProfile.status) { getUserById(); }
+                }catch(err) {
+                    console.log(err)
+                }
             })
-            const parsedProfile = await profile.json();
-            if(parsedProfile.status) { getUserById(); }
-        }catch(err) {
-            console.log(err)
-        }
+        })
     }
 
     const handlePostUpload = async (event: any) => {
@@ -102,23 +108,24 @@ const Profile = () => {
         event.target.value = ''
         let caption = prompt('Write caption for this post')
         if(!file || !caption) return;
-        let form: FormData = new FormData()
-        form.append('user_id', authUser._id)
-        form.append('caption', caption)
-        form.append('image', file)
 
-        try {
-            const post = await fetch(API + 'posts/', {
-                method: "POST",
-                body: form,
-                headers: { "Authorization": "Bearer " + authUser.token }
+        const imageRef = ref(imageDb, `posts/${v4()}`)
+        uploadBytes(imageRef, file).then(value => {
+            getDownloadURL(imageRef).then( async (image) => {
+                try {
+                    const post = await fetch(API + 'posts/', {
+                        method: "POST", body: JSON.stringify({user_id: authUser._id, caption, image}),
+                        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + authUser.token }
+                    })
+                    const parsedPost = await post.json();
+                    if(parsedPost.status) { fetchPosts(); }
+                    else dispatch(setSnack({message: parsedPost.message}))
+                }catch(err) {
+                    console.log(err)
+                }
             })
-            const parsedPost = await post.json();
-            if(parsedPost.status) { fetchPosts(); }
-            else dispatch(setSnack({message: parsedPost.message}))
-        }catch(err) {
-            console.log(err)
-        }
+        })
+
 
     }
 
@@ -183,7 +190,7 @@ const Profile = () => {
                         
                         <label htmlFor="avtar_file">
                             {user?.avatar ? 
-                            <img src={API + 'uploads/avatars/' + user.avatar?.filename} alt="" style={{width: '120px', height: '120px', cursor: 'pointer', borderRadius: '50%'}} /> : 
+                            <img src={user.avatar} alt="" style={{width: '120px', height: '120px', cursor: 'pointer', borderRadius: '50%'}} /> : 
                             <AccountCircle style={{width: '120px', height: '120px', cursor: 'pointer'}} /> } 
                         </label>
                         

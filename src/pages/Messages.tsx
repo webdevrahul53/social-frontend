@@ -14,7 +14,7 @@ const Profile = ({ user }) => {
     return (
         <Link to={'/messages/' + user._id} style={{textDecoration:'none', color: 'black'}}>
             <div className={`d-flex align-items-center p-3 ${params.id === user._id ? 'bg-light shadow-sm': ''}`}>
-                {user?.avatar?.filename ? <img src={API + 'uploads/avatars/' + user?.avatar?.filename} alt="Rahul" style={AvatarStyle} /> : 
+                {user?.avatar ? <img src={user?.avatar} alt="Rahul" style={AvatarStyle} /> : 
                 <AccountCircle style={AvatarStyle} />}
                 
                 {/* {!img && <div className="bg-secondary" style={AvatarStyle}></div>} */}

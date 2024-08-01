@@ -84,7 +84,7 @@ const MessageById = () => {
             <div className="d-flex align-items-center p-3">
                 <Link to={'/profile/' + user?._id} style={{textDecoration:'none', color: 'black'}}>
                     <div className="d-flex align-items-center p-2 px-md-4">
-                        {user?.avatar?.filename ? <img src={API + 'uploads/avatars/' + user?.avatar?.filename} alt="Rahul" style={AvatarStyle} /> : 
+                        {user?.avatar ? <img src={user?.avatar} alt="Rahul" style={AvatarStyle} /> : 
                         <AccountCircle style={AvatarStyle} />}
                         
                         <div className="px-3">
@@ -102,7 +102,7 @@ const MessageById = () => {
                 {messageList?.map(e => {
                     return <div key={e._id} className="d-flex align-items-center py-2"> 
                         <div>
-                            {e?.senderId?.avatar?.filename ? <img src={API + 'uploads/avatars/' + e?.senderId?.avatar?.filename} alt="Rahul" style={{width: '30px', height: '30px', borderRadius: '50%'}} /> : 
+                            {e?.senderId?.avatar ? <img src={e?.senderId?.avatar} alt="Rahul" style={{width: '30px', height: '30px', borderRadius: '50%'}} /> : 
                             <AccountCircle style={{width: '30px', height: '30px', borderRadius: '50%'}} />}
                         </div>
                         <div className="p-1 px-2 ms-2 bg-light border rounded"> {e?.text} </div>
