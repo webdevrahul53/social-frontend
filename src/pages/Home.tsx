@@ -164,10 +164,10 @@ const PostCard = ({ post, authUser, dispatch }) => {
             
             <Link to={""}>View all comments</Link>
           </div>
-          <div className="d-flex align-items-center py-2" style={{position: 'absolute', bottom: 0, width: '90%'}}>
+          <form action="#" onSubmit={(e) => {e.preventDefault();addComment(post._id)}} className="d-flex align-items-center py-2" style={{position: 'absolute', bottom: 0, width: '90%'}}>
             <input type="text" className="form-control" value={comment} onChange={e => setComment(e.target.value)} placeholder="Add a comment" />
-            <button type="button" className="btn btn-primary px-3 ms-2" onClick={() => addComment(post._id)}>Post</button>
-          </div>
+            <button type="submit" className="btn btn-primary px-3 ms-2">Post</button>
+          </form>
         </div>
       </div>
     </>
@@ -292,7 +292,7 @@ const Home = () => {
             <div>See all</div>
           </div>
 
-          {avatarLoading ? [1,2,3,4].map(e => {
+          {false ? [1,2,3,4].map(e => {
             return <div key={e} className="d-flex align-items-center px-3 py-2">
             <div className="bg-light" style={{width: '70px', height: '70px', borderRadius: '50%'}}></div>
             <div>
