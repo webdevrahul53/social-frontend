@@ -1,9 +1,12 @@
-import { Google, Instagram } from "@mui/icons-material"
+import { Instagram } from "@mui/icons-material"
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 import { setUser } from "../redux/userSlice/userSlice"
 import { useForm } from "react-hook-form"
+import { auth, provider } from "../helper/firebaseConfig"
+import { signInWithPopup } from "firebase/auth"
+import Google from "../static/google.png";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -11,6 +14,7 @@ const Login = () => {
     const { register, handleSubmit, setValue, formState: {errors} } = useForm();
     const [error, setError] = useState()
     const [isLoading, setLoading] = useState(false)
+    const [isSigningIn, setIsSigningIn] = useState(false);
 
     useEffect(() => {
         setValue("email", 'brandsonjohnson@gmail.com', { shouldDirty: true });
@@ -37,13 +41,27 @@ const Login = () => {
         }
     }
 
+    const googleSignin = () => {
+        if (isSigningIn) return; // Prevent multiple popups
+        setIsSigningIn(true);
+
+        signInWithPopup(auth,provider).then(data => {
+            const {email, displayName, uid} = data.user
+            onSubmit({name: displayName, email, password: uid})
+        }).catch(err => {
+            console.log(err )
+        }).finally(() => {
+          setIsSigningIn(false);
+        });
+    }
+
 
   return (
     <>
         <div className="container">
             <div className="py-3 d-none d-md-block"></div>
             <div className="row">
-                <div className="col-md-4 offset-md-4">
+                <div className="col-md-6 col-xl-4 offset-md-3 offset-xl-4">
 
                     <div className="card p-0 p-md-3 px-md-5 text-center">
                         <div className="mt-5">
@@ -61,9 +79,11 @@ const Login = () => {
                                 <input type="text" id="login_email" {...register('email', {required: 'Enter valid email address', pattern: /^\S+@\S+\.\S+$/})} className="form-control my-2" placeholder="Email Address" />
                                 <input type="password" id="login_password" {...register('password', {required: 'Password is required'})} className="form-control my-2" placeholder="Password" />
                                 <button type="submit" className="btn btn-lg w-100 btn-primary mt-2" disabled={isLoading} > {isLoading ? 'Loading..':'Login'}</button>
-                                <h6 className="m-0 mt-4 px-2" style={{cursor: 'pointer'}}> 
-                                    Continue with <Google style={{width: '25px', height: '25px', color: 'green'}} />oogle  
-                                </h6>
+                                <div className="mt-4 p-2 border border-success rounded d-flex align-items-center justify-content-center" 
+                                style={{cursor: 'pointer'}} onClick={googleSignin}> 
+                                    <img src={Google} alt="Google" width={"25px"} /> 
+                                    <span className="ps-2" style={{fontSize: "18px"}}>Continue with Google</span>
+                                </div>
 
                             </form>
                         </div>
