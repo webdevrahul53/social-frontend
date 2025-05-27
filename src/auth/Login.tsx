@@ -65,9 +65,13 @@ const Login = () => {
                 <div className="col-md-6 col-xl-4 offset-md-3 offset-xl-4">
 
                     <div className="card p-0 p-md-3 px-md-5 text-center">
-                        <div className="mt-5">
-                            <Instagram style={{width: '60px', height: '60px'}} />
-                            <h1 >Social</h1>
+                        <div className="mt-5 text-center">
+                            <div className="d-flex justify-content-center align-items-center mb-3" style={{ gap: "10px" }}>
+                                <Instagram style={{ width: '50px', height: '50px', color: '#E1306C' }} />
+                                <h1 className="m-0" style={{ fontSize: '2rem', fontWeight: 'bold', color: '#333' }}>Social</h1>
+                            </div>
+                            <p className="d-none d-md-block" style={{ fontSize: '1rem', color: '#666' }}>Connect with your friends and the world around you.</p>
+                            <p className="d-block d-md-none" style={{ fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>Connect with friends and the world around you.</p>
                         </div>
 
                         <div className="card-body">
@@ -80,11 +84,16 @@ const Login = () => {
                                 <input type="text" id="login_email" {...register('email', {required: 'Enter valid email address', pattern: /^\S+@\S+\.\S+$/})} className="form-control my-2" placeholder="Email Address" />
                                 <input type="password" id="login_password" {...register('password', {required: 'Password is required'})} className="form-control my-2" placeholder="Password" />
                                 <button type="submit" className="btn btn-lg w-100 btn-primary mt-2" disabled={isLoading} > {isLoading ? 'Loading..':'Login'}</button>
-                                <div className="mt-4 p-2 border border-success rounded d-flex align-items-center justify-content-center" 
-                                style={{cursor: 'pointer'}} onClick={googleSignin}> 
-                                    <img src={Google} alt="Google" width={"25px"} /> 
-                                    <span className="ps-2" style={{fontSize: "18px"}}>Continue with Google</span>
-                                </div>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-lg w-100 btn-outline-secondary mt-3 d-flex align-items-center justify-content-center" 
+                                    onClick={googleSignin}
+                                    disabled={isSigningIn}
+                                    style={{ gap: "10px" }}
+                                >
+                                    <img src={Google} alt="Google" width={"20px"} /> 
+                                    <span>Sign in with Google</span>
+                                </button>
 
                             </form>
                         </div>

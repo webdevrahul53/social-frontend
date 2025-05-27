@@ -50,50 +50,57 @@ const Register = () => {
 
   return (
     <>
-      <div className="container">
-            <div className="py-3 d-none d-md-block"></div>
-            <div className="row">
-                <div className="col-md-6 col-xl-4 offset-md-3 offset-xl-4">
+    <div className="container">
+        <div className="py-3 d-none d-md-block"></div>
+        <div className="row">
+            <div className="col-md-6 col-xl-4 offset-md-3 offset-xl-4">
 
-                    <div className="card p-0 p-md-3 px-md-5 text-center">
-                        <div className="mt-5">
-                            <Instagram style={{width: '60px', height: '60px'}} />
-                            <h1 >Social</h1>
-                        </div>
-
-                        <div className="card-body">
-                            {error && <div className="text-danger"> {error} </div>}
-                            {errors?.name && <div className="text-danger"> {errors?.name.message?.toString()} </div>}
-                            {errors?.email && <div className="text-danger"> {errors?.email.message?.toString()} </div>}
-                            {errors?.email && errors?.email?.type === 'pattern' && <div className="text-danger"> Enter valid email address </div>}
-                            {errors?.password && <div className="text-danger"> {errors?.password.message?.toString()} </div>}
-
-                            <form action="#" onSubmit={handleSubmit(onSubmit)} className="mt-5">
-                                <input type="text" {...register('name', {required: 'Full name is required'})} className="form-control my-2" placeholder="Full Name" />
-                                <input type="text" {...register('email', {required: 'Enter valid email address', pattern: /^\S+@\S+\.\S+$/})} className="form-control my-2" placeholder="Email Address" />
-                                <input type="password" {...register('password', {required: 'Password is required'})} className="form-control my-2" placeholder="Password" />
-                                <button type="submit" className="btn btn-lg w-100 btn-primary mt-2">Register</button>
-                                <div className="mt-4 p-2 border border-success rounded d-flex align-items-center justify-content-center" 
-                                style={{cursor: 'pointer'}} onClick={googleSignin}> 
-                                    <img src={Google} alt="Google" width={"25px"} /> 
-                                    <span className="ps-2" style={{fontSize: "18px"}}>Continue with Google</span>
-                                </div>
-
-                            </form>
-                        </div>
-
+              <div className="card p-0 p-md-3 px-md-5 text-center">
+                <div className="mt-5 text-center">
+                    <div className="d-flex justify-content-center align-items-center mb-3" style={{ gap: "10px" }}>
+                      <Instagram style={{ width: '50px', height: '50px', color: '#E1306C' }} />
+                      <h1 className="m-0" style={{ fontSize: '2rem', fontWeight: 'bold', color: '#333' }}>Social</h1>
                     </div>
-
-                    <div className="card p-3 mt-2">
-                        <div className="text-center">
-                            {/* <Link to={''}>Forget Password ?</Link> */}
-                            <span>Already have an Account ? <Link to={'/login'}>Login</Link></span> 
-                        </div>
-                    </div>
-
+                    <p className="d-none d-md-block" style={{ fontSize: '1rem', color: '#666' }}>Connect with your friends and the world around you.</p>
+                    <p className="d-block d-md-none" style={{ fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>Connect with friends and the world around you.</p>
                 </div>
+
+                <div className="card-body">
+                    {error && <div className="text-danger"> {error} </div>}
+                    {errors?.name && <div className="text-danger"> {errors?.name.message?.toString()} </div>}
+                    {errors?.email && <div className="text-danger"> {errors?.email.message?.toString()} </div>}
+                    {errors?.email && errors?.email?.type === 'pattern' && <div className="text-danger"> Enter valid email address </div>}
+                    {errors?.password && <div className="text-danger"> {errors?.password.message?.toString()} </div>}
+
+                    <form action="#" onSubmit={handleSubmit(onSubmit)} className="mt-5">
+                      <input type="text" id="register_name" {...register('name', {required: 'Full name is required'})} className="form-control my-2" placeholder="Full Name" />
+                      <input type="text" id="register_email" {...register('email', {required: 'Enter valid email address', pattern: /^\S+@\S+\.\S+$/})} className="form-control my-2" placeholder="Email Address" />
+                      <input type="password" id="register_password" {...register('password', {required: 'Password is required'})} className="form-control my-2" placeholder="Password" />
+                      <button type="submit" className="btn btn-lg w-100 btn-primary mt-2" disabled={isSigningIn}>Register</button>
+                      <button 
+                        type="button" 
+                        className="btn btn-lg w-100 btn-outline-secondary mt-3 d-flex align-items-center justify-content-center" 
+                        onClick={googleSignin}
+                        disabled={isSigningIn}
+                        style={{ gap: "10px" }}
+                      >
+                        <img src={Google} alt="Google" width={"20px"} /> 
+                        <span>Sign in with Google</span>
+                      </button>
+                    </form>
+                </div>
+              </div>
+
+              <div className="card p-4 mt-3">
+                <div className="d-flex justify-content-between">
+                    {/* <Link to={''}>Forget Password ?</Link> */}
+                    <span>Already have an Account ? <Link to={'/login'}>Login</Link></span> 
+                </div>
+              </div>
+
             </div>
-        </div> 
+        </div>
+      </div>
     </>
   )
 }

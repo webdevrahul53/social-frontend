@@ -78,101 +78,211 @@ const Profile = ({ user, authUser, onFollow = null, onLogout = null }) => {
 }
 
 const PostCard = ({ post, authUser, dispatch }) => {
-
-  const [postData, setPost] = useState(null)
-  const [comment, setComment] = useState('')
+  const [postData, setPost] = useState(null);
+  const [comment, setComment] = useState("");
 
   useEffect(() => {
-    setPost(post)
-  }, [])
+    setPost(post);
+  }, []);
 
-  const whenLiked = async (id: String) => {
-    try {
-      let payload = { user_id: authUser._id }
-      let path = postData?.likes.includes(authUser._id) ? 'unlike': 'like'
-      const likes = await fetch(API + 'posts/'+path+'/'+ id, {
-        method: 'PATCH', body: JSON.stringify(payload),
-        headers: { "Content-Type":"application/json", "Authorization": "Bearer " + authUser.token }
+  const whenLiked = (id: String) => {
+    let updatedLikes = [...postData?.likes];
+    const isLiked = updatedLikes.includes(authUser._id);
+
+    // Optimistically update the UI
+    if (isLiked) {
+      updatedLikes = updatedLikes.filter((userId) => userId !== authUser._id);
+    } else {
+      updatedLikes.push(authUser._id);
+    }
+    setPost({ ...post, likes: updatedLikes });
+
+    // Send the request to the server
+    const path = isLiked ? "unlike" : "like";
+    fetch(API + "posts/" + path + "/" + id, {
+      method: "PATCH",
+      body: JSON.stringify({ user_id: authUser._id }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + authUser.token,
+      },
+    })
+      .then((response) => response.json())
+      .then((parsedlikes) => {
+        if (!parsedlikes.status) {
+          // Revert the optimistic update if the request fails
+          setPost(post);
+          dispatch(setSnack({ message: parsedlikes.message }));
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        // Revert the optimistic update if there's an error
+        setPost(post);
       });
-      const parsedlikes = await likes.json()
-      if(parsedlikes.status) { setPost({ ...post, likes: parsedlikes?.post?.likes }) }
-      else dispatch(setSnack({message: parsedlikes.message}))
-    }catch(err) { console.log(err) } 
-  }
+  };
 
   const addComment = async (id: string) => {
-    if(!comment || comment === '') return;
+    if (!comment.trim()) return;
+
+    // Optimistically update the UI
+    const newComment = {
+      _id: Date.now().toString(), // Temporary ID for UI
+      user_id: authUser._id,
+      email: authUser.email,
+      text: comment,
+    };
+    const updatedComments = [...(postData?.comments || []), newComment];
+    setPost({ ...post, comments: updatedComments });
+    setComment("");
+
     try {
-      let payload = { user_id: authUser._id, email: authUser.email, text: comment }
-      const comments = await fetch(API + 'posts/add_comment/'+ id, {
-        method: 'POST', body: JSON.stringify(payload),
-        headers: { "Content-Type":"application/json", "Authorization": "Bearer " + authUser.token }
+      const payload = {
+        user_id: authUser._id,
+        email: authUser.email,
+        text: comment,
+      };
+      const response = await fetch(API + "posts/add_comment/" + id, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + authUser.token,
+        },
       });
-      const parsedcomments = await comments.json()
-      if(parsedcomments.status) { 
-        setComment('')
-        setPost({ ...post, comments: parsedcomments?.post?.comments }) 
+      const parsedResponse = await response.json();
+
+      if (parsedResponse.status) {
+        setPost({ ...post, comments: parsedResponse?.post?.comments });
+      } else {
+        // Revert optimistic update if the request fails
+        setPost(post);
+        dispatch(setSnack({ message: parsedResponse.message }));
       }
-      else dispatch(setSnack({message: parsedcomments.message}))
-    }catch(err) { console.log(err) } 
-  }
+    } catch (err) {
+      console.error(err);
+      // Revert optimistic update if there's an error
+      setPost(post);
+    }
+  };
 
   return (
-    <>
-      <div className="card my-2" style={{width: '100%', height: '100%', position: 'relative'}}>
-        {/* Card Header */}
-        <div className="d-flex align-items-center">
-          <div className="d-flex align-items-center p-3">
-            <Link to={'/profile/' + postData?.user_id._id}> <img src={postData?.user_id?.avatar} alt="Rahul" style={AvatarStyle} /> </Link>
-            <div className="px-3">
-              <h6 className="m-0"> {postData?.user_id.email} </h6>
-              <div className="text-secondary">location</div>
-              {/* <a href="">Edit Profile</a> */}
-            </div>
-          </div>
-          <div className="ms-auto pe-3">
-            <IconButton aria-label="settings">
-              <MoreVert />
-            </IconButton>
+    <div className="card my-3 shadow-sm" style={{ borderRadius: "10px" }}>
+      {/* Card Header */}
+      <div className="d-flex align-items-center p-3">
+        <Link to={"/profile/" + postData?.user_id._id}>
+          <img
+            src={postData?.user_id?.avatar}
+            alt="User Avatar"
+            style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+        </Link>
+        <div className="px-3">
+          <h6 className="m-0" style={{ fontWeight: "bold" }}>
+            {postData?.user_id.email}
+          </h6>
+          <div className="text-secondary" style={{ fontSize: "12px" }}>
+            Location
           </div>
         </div>
-
-        <img src={postData?.image} width={'100%'} alt="" onDoubleClick={() => whenLiked(postData?._id)} />
-        <div className="p-2 px-3">
-          <div className="py-2 pb-4">
-            <div className="d-flex align-items-center">
-              <div>
-                {!postData?.likes.includes(authUser._id) ? <span onClick={() => whenLiked(postData?._id)} style={{cursor: 'pointer'}}> 
-                  <FavoriteBorderIcon style={IconStyle} /> 
-                </span>: 
-                <span onClick={() => whenLiked(postData?._id)} style={{cursor: 'pointer'}}> 
-                  <Favorite style={{...IconStyle, color:'red'}} /> 
-                </span>}
-                <CommentIcon style={IconStyle} />
-              </div>
-              <div className="ms-auto">
-                {/* <BookmarkIcon style={IconStyle} /> */}
-                <BookmarkBorderIcon style={IconStyle} />
-
-              </div>
-            </div>
-            <div> <strong>{postData?.likes?.length} Likes</strong> </div>
-            <div className="card-text"> <strong>{postData?.user_id?.email}</strong> {postData?.caption}</div>
-            {postData?.comments && postData?.comments?.map(e => {
-              return <div key={e._id} className="card-text"> <strong>{e?.email}</strong> {e?.text}</div>
-            })}
-            
-            <Link to={""}>View all comments</Link>
-          </div>
-          <form action="#" onSubmit={(e) => {e.preventDefault();addComment(post._id)}} className="d-flex align-items-center py-2" style={{position: 'absolute', bottom: 0, width: '90%'}}>
-            <input type="text" className="form-control" value={comment} onChange={e => setComment(e.target.value)} placeholder="Add a comment" />
-            <button type="submit" className="btn btn-primary px-3 ms-2">Post</button>
-          </form>
+        <div className="ms-auto">
+          <IconButton aria-label="settings">
+            <MoreVert />
+          </IconButton>
         </div>
       </div>
-    </>
-  )
-}
+
+      {/* Post Image */}
+      <div style={{ position: "relative" }}>
+        <img
+          src={postData?.image}
+          alt="Post"
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            objectFit: "cover",
+          }}
+          onDoubleClick={() => whenLiked(postData?._id)}
+        />
+      </div>
+
+      {/* Post Actions */}
+      <div className="p-3">
+        <div className="d-flex align-items-center mb-2">
+          <div>
+            {!postData?.likes.includes(authUser._id) ? (
+              <span
+                onClick={() => whenLiked(postData?._id)}
+                style={{ cursor: "pointer" }}
+              >
+                <FavoriteBorderIcon style={{ fontSize: "28px" }} />
+              </span>
+            ) : (
+              <span
+                onClick={() => whenLiked(postData?._id)}
+                style={{ cursor: "pointer" }}
+              >
+                <Favorite style={{ fontSize: "28px", color: "red" }} />
+              </span>
+            )}
+            <CommentIcon
+              style={{ fontSize: "28px", marginLeft: "10px", cursor: "pointer" }}
+            />
+          </div>
+          <div className="ms-auto">
+            <BookmarkBorderIcon style={{ fontSize: "28px", cursor: "pointer" }} />
+          </div>
+        </div>
+        <div>
+          <strong>{postData?.likes?.length} likes</strong>
+        </div>
+        <div className="mt-2">
+          <strong>{postData?.user_id?.email}</strong> {postData?.caption}
+        </div>
+        {postData?.comments?.slice(0, 2).map((e) => (
+          <div key={e._id} className="mt-1">
+            <strong>{e?.email}</strong> {e?.text}
+          </div>
+        ))}
+        {postData?.comments?.length > 2 && (
+          <Link to={""} className="text-secondary" style={{ fontSize: "14px" }}>
+            View all {postData?.comments?.length} comments
+          </Link>
+        )}
+      </div>
+
+      {/* Add Comment */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          addComment(post._id);
+        }}
+        className="d-flex align-items-center p-3 border-top"
+      >
+        <input
+          type="text"
+          className="form-control"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Add a comment..."
+          style={{ border: "none", outline: "none" }}
+        />
+        <button
+          type="submit"
+          className="btn btn-link text-primary"
+          style={{ fontWeight: "bold" }}
+        >
+          Post
+        </button>
+      </form>
+    </div>
+  );
+};
 
 
 const Home = () => {
@@ -224,23 +334,45 @@ const Home = () => {
     }
   }
 
-  const startedFollowing = async (id:String, method: 'POST' | 'DELETE') => {
+  const startedFollowing = async (id: String, method: 'POST' | 'DELETE') => {
     try {
-      let payload = { followed_by: authUser._id, followed_to: id }
-      const follow = await fetch(API + 'followers', {
-        method, body: JSON.stringify(payload),
-        headers: { "Content-Type":"application/json", "Authorization": "Bearer " + authUser.token }
+      const payload = { followed_by: authUser._id, followed_to: id };
+      
+      // Optimistically update the UI
+      const updatedAvatars = avatars.map((user) => {
+        if (user._id === id) {
+          return {
+            ...user,
+            followers: method === 'POST'
+              ? [...user.followers, authUser._id]
+              : user.followers.filter((followerId) => followerId !== authUser._id),
+          };
+        }
+        return user;
       });
-      const parsedfollow = await follow.json()
-      if(parsedfollow.status) fetchAvatars();
-      else dispatch(setSnack({message: parsedfollow.message}))
-      
-    }catch(err) {
-      console.log(err.message);
-      
-     }
+      setAvatars(updatedAvatars);
 
-  }
+      const response = await fetch(API + 'followers', {
+        method,
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + authUser.token,
+        },
+      });
+      const parsedResponse = await response.json();
+
+      if (!parsedResponse.status) {
+        // Revert optimistic update if the request fails
+        fetchAvatars();
+        dispatch(setSnack({ message: parsedResponse.message }));
+      }
+    } catch (err) {
+      console.error(err.message);
+      // Revert optimistic update if there's an error
+      fetchAvatars();
+    }
+  };
 
   return (
     <div className="container mb-5">

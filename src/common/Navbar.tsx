@@ -29,10 +29,13 @@ const Navbar = () => {
       <div className="d-none d-lg-block mb-3">
         <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm p-2">
           <div className="container">
-            <div className="display-6 cursor-pointer"> 
-              <Link to={'/'} style={anchorStyle}>
-                <Instagram style={{width:'40px', height: '40px'}} /> Instagram
-              </Link> 
+            <div className="display-6 cursor-pointer">
+            <Link to={"/"} style={anchorStyle} className="d-flex align-items-center">
+              <Instagram style={{ width: "40px", height: "40px" }} />
+              <span className="ms-2 fw-bold" style={{ fontSize: "24px" }}>
+                Instagram
+              </span>
+            </Link>
             </div>
             {/* <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon" />
@@ -40,16 +43,28 @@ const Navbar = () => {
             
             <ul className="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll ms-4">
               <li className="nav-item">
-                <Link className="nav-link active" to={'/'} style={{fontSize: '25px'}}>Home</Link>
+              <Link className="nav-link active d-flex align-items-center" to={'/'} style={{fontSize: '20px', fontWeight: 'bold'}}>
+                <Home style={{ marginRight: '8px' }} />
+                Home
+              </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to={user._id ? '/profile/'+ user._id : '/login'} style={{fontSize: '25px'}}>Profile</Link>
+              <Link className="nav-link d-flex align-items-center" to={user._id ? '/profile/'+ user._id : '/login'} style={{fontSize: '20px', fontWeight: 'bold'}}>
+                <Person style={{ marginRight: '8px' }} />
+                Profile
+              </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to={'/messages'} style={{fontSize: '25px'}}>Messages</Link>
+              <Link className="nav-link d-flex align-items-center" to={'/messages'} style={{fontSize: '20px', fontWeight: 'bold'}}>
+                <Email style={{ marginRight: '8px' }} />
+                Messages
+              </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to={'/'} style={{fontSize: '25px'}}>Notifications</Link>
+              <Link className="nav-link d-flex align-items-center" to={'/'} style={{fontSize: '20px', fontWeight: 'bold'}}>
+                <Notifications style={{ marginRight: '8px' }} />
+                Notifications
+              </Link>
               </li>
             </ul>
 
