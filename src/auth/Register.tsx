@@ -5,9 +5,12 @@ import { useForm } from "react-hook-form"
 import { signInWithPopup } from "firebase/auth"
 import { auth, provider } from "../helper/firebaseConfig"
 import Google from "../static/google.png";
+import { useDispatch } from "react-redux"
+import { setUser } from "../redux/userSlice/userSlice"
 
 const Register = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch()
     const { register, handleSubmit, formState: {errors} } = useForm()
     const [error, setError] = useState('')
     const [isSigningIn, setIsSigningIn] = useState(false);
@@ -23,7 +26,8 @@ const Register = () => {
             })
             let parsedUser = await user.json();
             if(parsedUser.status){
-                navigate('/login')
+                dispatch(setUser(parsedUser.data))
+                navigate('/profile/'+parsedUser.data._id)
             }else setError(parsedUser.message)
         }catch(err) {
             setError(err)

@@ -21,10 +21,11 @@ const Login = () => {
         setValue("password", 'brandsonjohnson', { shouldDirty: true });
     }, [])
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (data, isGoogle = false) => {
         setLoading(true)
         try {
-            const user = await fetch(process.env.REACT_APP_API_URL + 'users/login', {
+            const url = isGoogle ? 'users/google-signin' : 'users/login'
+            const user = await fetch(process.env.REACT_APP_API_URL + url, {
                 method: "POST",
                 body: JSON.stringify(data),
                 headers: { "Content-Type": "application/json" }
@@ -47,7 +48,7 @@ const Login = () => {
 
         signInWithPopup(auth,provider).then(data => {
             const {email, displayName, uid} = data.user
-            onSubmit({name: displayName, email, password: uid})
+            onSubmit({name: displayName, email, password: uid}, true)
         }).catch(err => {
             console.log(err )
         }).finally(() => {
