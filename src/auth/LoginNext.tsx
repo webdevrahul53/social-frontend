@@ -52,7 +52,7 @@ const Login = () => {
                     <form onSubmit={handleSubmit(onSubmit)} className="p-3">
                     <TextField
                         {...register('email', {required: 'Enter valid email address'})}
-                        label="Username, email or phone number"
+                        label="Username, email or mobile number"
                         variant="filled"
                         fullWidth
                         margin="normal"
@@ -161,7 +161,7 @@ const Login = () => {
 
                     </form>
                     <div className="position-absolute bottom-0 w-100 text-center p-3" style={{gap: "10px", padding: "20px 0"}}>
-                        <Link to={'/register'}><button type="submit" className="btn btn-lg w-100 btn-outline-primary mt-2" style={{borderRadius: "30px"}} >Create New Account</button></Link>
+                        <button type="button" className="btn btn-lg w-100 btn-outline-primary mt-2" style={{borderRadius: "30px"}} >Create New Account</button>
                         <img src="/meta.png" alt="Meta Logo" className="m-auto my-2 mt-4" width={70} />
                     </div>
                 
