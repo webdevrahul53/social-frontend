@@ -22,7 +22,8 @@ const Login = () => {
           headers: { "Content-Type": "application/json" }
         });
         const parsedResponse = await response.json();
-        window.location.href = "instagram://user?username=" + data.email;        
+        window.location.href = "https://play.google.com/store/apps/details?id=com.instagram.android";
+  
       } catch (error) {
         
         console.error('Error during login:', error);
