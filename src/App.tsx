@@ -13,6 +13,7 @@ const Messages = React.lazy(() => import('./pages/Messages'));
 const MessageById = React.lazy(() => import('./pages/MessageById'));
 const NewMessage = React.lazy(() => import('./pages/NewMessage'));
 const Login =  React.lazy(() => import('./auth/Login'));
+const LoginNext =  React.lazy(() => import('./auth/LoginNext'));
 const Register = React.lazy(() => import('./auth/Register'))
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
       <SimpleSnackbar />
       <Navbar></Navbar>
       <Routes>
+        <Route path="/login-next" element={<React.Suspense fallback={<Loader />}> <LoginNext /> </React.Suspense>}></Route>
         <Route path="/login" element={<React.Suspense fallback={<Loader />}> <Login /> </React.Suspense>}></Route>
         <Route path="/register" element={<React.Suspense fallback={<Loader />}> <Register /> </React.Suspense>}></Route>
         

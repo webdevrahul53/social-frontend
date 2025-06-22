@@ -77,7 +77,7 @@ const Navbar = () => {
         </nav>
       </div>
 
-      <div className="d-lg-none position-fixed bottom-0 w-100 bg-light shadow-lg" style={{zIndex: 100, border: '2px solid lightgray'}}>
+      {user && user?.token && <div className="d-lg-none position-fixed bottom-0 w-100 bg-light shadow-lg" style={{zIndex: 100, border: '2px solid lightgray'}}>
           <Tabs value={bottomNav} onChange={handleBottomNavChange} centered>
             <Tab value={"/"} icon={<Home />} />
             <Tab value={"/messages"} icon={<Email />} />
@@ -85,7 +85,7 @@ const Navbar = () => {
             <Tab value={user._id ? '/profile/'+ user._id : '/login'} icon={<Person  />} />
           </Tabs>
 
-      </div>
+      </div>}
       
 
     </>
